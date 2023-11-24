@@ -23,12 +23,16 @@
           <input type="checkbox" v-model="is_auto_save">
           Auto Save
         </label>
+        <label>
+          <input type="checkbox" v-model="is_blur_image">
+          Blur Image
+        </label>
       </div>
     </div>
 
     <div class="right">
       <div class="row" :style="{ width: image_div_width }" @click="switch_size">
-        <img v-if="image_src" style="width: 100%;" :src="image_src" alt="ai anime image">
+        <img v-if="image_src" :class="{ blur: is_blur_image }" style="width: 100%;" :src="image_src" alt="ai anime image">
       </div>
     </div>
   </div>
@@ -38,6 +42,7 @@
 import { ref, Ref, watch } from 'vue'
 import { artist_tags_styles } from '../lib/candidate-tags'
 import { default_input } from '../lib/default-input'
+import example_image from '../assets/example.png'
 
 function load_from_localstorage (name: string, defaultValue: string) {
   return ref(localStorage.getItem('NAI_GENERATE_IMAGE_WEBAPP_' + name) || defaultValue)
@@ -54,8 +59,9 @@ const quality_tag = ref('very aesthetic')
 const artist_tag = ref('')
 const main_tag = ref('1girl, solo')
 const isGenerating = ref(false)
-const image_src = ref('')
+const image_src = ref(example_image)
 const is_auto_save = ref(false)
+const is_blur_image = ref(false)
 
 const image_div_width_1 = '400px'
 const image_div_width_2 = '100%'
@@ -132,6 +138,9 @@ async function generate () {
 </script>
 
 <style scoped>
+.blur {
+  filter: blur(20px);
+}
 .left {
   flex-grow: 1;
 }
