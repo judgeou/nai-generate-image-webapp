@@ -5,6 +5,7 @@ import zipfile
 import os
 import json
 from flask import send_file
+import uuid
 
 def unzipone (zip_bytes: bytes):
   bytes_io = io.BytesIO(zip_bytes)
@@ -21,7 +22,7 @@ def unzipone (zip_bytes: bytes):
 
 nai_session = requests.Session()
 proxies = {
-  "https": "http://127.0.0.1:1092"
+  "https": "http://127.0.0.1:1081"
 }
 
 app = Flask(__name__,
@@ -59,9 +60,13 @@ def generate_image():
     )
 
     pngdata = unzipone(res.content)
-    bytes_io = io.BytesIO(pngdata)
+    # bytes_io = io.BytesIO(pngdata)
+    img_filename = str(uuid.uuid4()) + '.png'
 
-    return send_file(bytes_io, mimetype='image/png')
+    with open('../frontend/dist/' + img_filename, 'wb') as file:
+        file.write(pngdata)
+
+    return img_filename
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, port=5001)

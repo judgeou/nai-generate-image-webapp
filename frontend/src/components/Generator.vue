@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex;">
+  <div style="display: flex; flex-wrap: wrap;">
     <div class="left">
       <div class="row">
         <input type="password" placeholder="authorization" v-model="authorization">
@@ -120,17 +120,15 @@ async function generate () {
     post_param.nai_param.parameters.seed = Math.floor(Math.random() * Math.pow(2, 31))
     const res = await post_json('/api/generate-image', post_param)
 
-    const blob = await res.blob()
-    const objurl = URL.createObjectURL(blob)
+    const filename = await res.text()
+    const objurl = `/${filename}`
+
+    // URL.revokeObjectURL(image_src.value)
     image_src.value = objurl
 
     if (is_auto_save.value) {
       downloadImage(objurl)
     }
-    
-    setTimeout(() => {
-      URL.revokeObjectURL(objurl)
-    }, 1000)
   } finally {
     isGenerating.value = false
   }
