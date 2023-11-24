@@ -15,7 +15,16 @@ const artist_tags_styles = [
     tags: 'chen bin, year 2022,atdan,hito,hiten,mignon'
   },
   {
+    tags: 'chen bin, year 2022,atdan,hiten'
+  },
+  {
     tags: 'artist:baku-p, loli'
+  },
+  {
+    tags: 'artist:morikura_en, [artist:ogipote]'
+  },
+  {
+    tags: 'artist:sincos, [artist:morikura_en]'
   }
 ]
 

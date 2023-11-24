@@ -19,6 +19,7 @@
       </div>
       <div class="row">
         <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="generate">Generate</button>
+        <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="enhance">Enhance</button>
         <label>
           <input type="checkbox" v-model="is_auto_save">
           Auto Save
@@ -32,7 +33,7 @@
 
     <div class="right">
       <div class="row" :style="{ width: image_div_width }" @click="switch_size">
-        <img v-if="image_src" :class="{ blur: is_blur_image }" style="width: 100%;" :src="image_src" alt="ai anime image">
+        <img v-if="image_src" ref="el_image" :class="{ blur: is_blur_image }" style="width: 100%;" :src="image_src" alt="ai anime image">
       </div>
     </div>
   </div>
@@ -41,7 +42,7 @@
 <script setup lang="ts">
 import { ref, Ref, watch } from 'vue'
 import { artist_tags_styles } from '../lib/candidate-tags'
-import { default_input } from '../lib/default-input'
+import { default_input, default_img2img } from '../lib/default-input'
 import example_image from '../assets/example.webp'
 
 function load_from_localstorage (name: string, defaultValue: string) {
@@ -64,8 +65,9 @@ const is_auto_save = ref(false)
 const is_blur_image = ref(false)
 
 const image_div_width_1 = '400px'
-const image_div_width_2 = '100%'
+const image_div_width_2 = '832px'
 const image_div_width = ref(image_div_width_1)
+const el_image = ref<HTMLImageElement>()
 
 watch_save_to_localstorage('authorization', authorization)
 
@@ -104,6 +106,54 @@ function downloadImage (url: string) {
     document.body.appendChild(tempLink);
     tempLink.click();
     document.body.removeChild(tempLink);
+}
+
+function image_to_base64url () {
+  var img = el_image.value!
+
+  var canvas = document.createElement("canvas");
+  canvas.width = default_img2img.parameters.width;
+  canvas.height = default_img2img.parameters.height;
+
+  var ctx = canvas.getContext("2d")!;
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  var dataURL = canvas.toDataURL("image/png");
+  canvas.remove()
+
+  return dataURL
+}
+
+async function enhance () {
+  isGenerating.value = true
+  try {
+    const tags = [ quality_tag.value, artist_tag.value, main_tag.value ].join(', ')
+    const post_param = {
+      nai_param: {
+        ...default_img2img,
+        input: tags
+      },
+      authorization: authorization.value
+    }
+    const seed = Math.floor(Math.random() * Math.pow(2, 31))
+    post_param.nai_param.parameters.seed = seed
+    post_param.nai_param.parameters.extra_noise_seed = seed
+    post_param.nai_param.parameters.image = image_to_base64url().split(',')[1]
+
+    const res = await post_json('/api/generate-image', post_param)
+
+    const filename = await res.text()
+    const objurl = `/${filename}`
+
+    // URL.revokeObjectURL(image_src.value)
+    image_src.value = objurl
+
+    if (is_auto_save.value) {
+      downloadImage(objurl)
+    }
+  } finally {
+    isGenerating.value = false
+  }
 }
 
 async function generate () {

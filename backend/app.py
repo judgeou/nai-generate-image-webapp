@@ -56,17 +56,21 @@ def generate_image():
         impersonate="chrome110",
         proxies=proxies,
         json=nai_param,
-        headers=headers
+        headers=headers,
+        timeout=60
     )
 
-    pngdata = unzipone(res.content)
-    # bytes_io = io.BytesIO(pngdata)
-    img_filename = str(uuid.uuid4()) + '.png'
+    try:
+        pngdata = unzipone(res.content)
+        img_filename = str(uuid.uuid4()) + '.png'
 
-    with open('../frontend/dist/' + img_filename, 'wb') as file:
-        file.write(pngdata)
+        with open('../frontend/dist/' + img_filename, 'wb') as file:
+            file.write(pngdata)
 
-    return img_filename
+        return img_filename
+    except:
+        print(res.text)
+        return None
 
 if __name__ == '__main__':
     app.run(debug=False, port=5001)
