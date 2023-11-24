@@ -42,7 +42,7 @@
 import { ref, Ref, watch } from 'vue'
 import { artist_tags_styles } from '../lib/candidate-tags'
 import { default_input } from '../lib/default-input'
-import example_image from '../assets/example.png'
+import example_image from '../assets/example.webp'
 
 function load_from_localstorage (name: string, defaultValue: string) {
   return ref(localStorage.getItem('NAI_GENERATE_IMAGE_WEBAPP_' + name) || defaultValue)
