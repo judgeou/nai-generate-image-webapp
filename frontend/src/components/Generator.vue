@@ -21,10 +21,13 @@
         <select v-model="size_id">
           <option v-for="item in size_options" :value="item.id">{{ item.label }}</option>
         </select>
+
+        队列：{{ generate_task.length }}
       </div>
       <div class="row">
         <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="generate">Generate</button>
         <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="enhance">Enhance</button>
+        <button style="width: 100px; height: 40px;"  @click="generate_task.length = 0">Clear</button>
         <label>
           <input type="checkbox" v-model="is_auto_save">
           Auto Save
@@ -37,18 +40,25 @@
     </div>
 
     <div class="right">
-      <div class="row" :style="{ width: image_div_width }" @click="switch_size">
-        <img v-if="image_src" ref="el_image" :class="{ blur: is_blur_image }" style="width: 100%;" :src="image_src" alt="ai anime image">
+      <div v-for="item in img_list" :style="{ width: image_div_width, display: 'inline-block' }" @click="switch_size">
+        <img ref="el_image" :class="{ blur: is_blur_image }" style="width: 100%;" :src="item" alt="ai anime image">
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, watch } from 'vue'
+import { ref, Ref, watch, reactive, onUnmounted } from 'vue'
 import { artist_tags_styles } from '../lib/candidate-tags'
-import { default_input, default_img2img } from '../lib/default-input'
-import example_image from '../assets/example.webp'
+import { get_default_input, get_default_img2img } from '../lib/default-input'
+// import example_image from '../assets/example.webp'
+
+const default_input_one = get_default_input()
+
+interface SendParam {
+  nai_param: typeof default_input_one
+  authorization: string
+}
 
 function load_from_localstorage (name: string, defaultValue: string) {
   return ref(localStorage.getItem('NAI_GENERATE_IMAGE_WEBAPP_' + name) || defaultValue)
@@ -92,8 +102,7 @@ const quality_tag = ref('very aesthetic')
 const artist_tag = ref('')
 const main_tag = ref('1girl, solo')
 const isGenerating = ref(false)
-const image_src = ref(example_image)
-const is_auto_save = ref(false)
+const is_auto_save = ref(true)
 const is_blur_image = ref(false)
 const size_id = ref('1')
 
@@ -101,6 +110,10 @@ const image_div_width_1 = '400px'
 const image_div_width_2 = '832px'
 const image_div_width = ref(image_div_width_1)
 const el_image = ref<HTMLImageElement>()
+
+const generate_task = reactive([] as SendParam[])
+const img_list = reactive([] as string[])
+let isRunning = true
 
 watch_save_to_localstorage('authorization', authorization)
 
@@ -118,9 +131,10 @@ async function post_json (path: string, data: any) {
   return res
 }
 
-function notifi (img_url: string) {
+function notifi (img_url: string, cost_time: number) {
   if (Notification.permission === "granted") {
     var notification = new Notification("新消息！", {
+      body: `${(cost_time / 1000).toFixed(2)}s`,
       icon: "/novelai-round.png", // 小图标
       image: img_url, // 大图片,
       silent: true
@@ -160,6 +174,7 @@ function image_to_base64url () {
   var img = el_image.value!
 
   var canvas = document.createElement("canvas");
+  const default_img2img = get_default_img2img()
   canvas.width = default_img2img.parameters.width;
   canvas.height = default_img2img.parameters.height;
 
@@ -173,8 +188,8 @@ function image_to_base64url () {
 }
 
 async function enhance () {
-  isGenerating.value = true
-  try {
+  {
+    const default_img2img = get_default_img2img()
     const tags = [ quality_tag.value, artist_tag.value, main_tag.value ].join(', ')
     const post_param = {
       nai_param: {
@@ -193,27 +208,14 @@ async function enhance () {
     post_param.nai_param.parameters.extra_noise_seed = seed
     post_param.nai_param.parameters.image = image_to_base64url().split(',')[1]
 
-    const res = await post_json('/api/generate-image', post_param)
+    generate_task.push(post_param)
 
-    const filename = await res.text()
-    const objurl = `/${filename}`
-
-    // URL.revokeObjectURL(image_src.value)
-    image_src.value = objurl
-
-    if (is_auto_save.value) {
-      downloadImage(objurl)
-    }
-
-    notifi(objurl)
-  } finally {
-    isGenerating.value = false
   }
 }
 
 async function generate () {
-  isGenerating.value = true
-  try {
+  {
+    const default_input = get_default_input()
     const tags = [ quality_tag.value, artist_tag.value, main_tag.value ].join(', ')
     const post_param = {
       nai_param: {
@@ -227,23 +229,51 @@ async function generate () {
     post_param.nai_param.parameters.seed = Math.floor(Math.random() * Math.pow(2, 31))
     post_param.nai_param.parameters.width = select_size!.width
     post_param.nai_param.parameters.height = select_size!.height
-    const res = await post_json('/api/generate-image', post_param)
 
-    const filename = await res.text()
-    const objurl = `/${filename}`
+    generate_task.push(post_param)
 
-    // URL.revokeObjectURL(image_src.value)
-    image_src.value = objurl
-
-    if (is_auto_save.value) {
-      downloadImage(objurl)
-    }
-
-    notifi(objurl)
-  } finally {
-    isGenerating.value = false
   }
 }
+
+async function send_action (post_param: SendParam) {
+  const t1 = new Date()
+  const res = await post_json('/api/generate-image', post_param)
+
+  const filename = await res.text()
+  const objurl = `/${filename}`
+
+  // URL.revokeObjectURL(image_src.value)
+  img_list.unshift(objurl)
+
+  if (img_list.length > 20) {
+    img_list.pop()
+  }
+
+  if (is_auto_save.value) {
+    downloadImage(objurl)
+  }
+
+  const t2 = new Date()
+  notifi(objurl, t2.getTime() - t1.getTime())
+}
+
+async function beginLoop () {
+  while (isRunning) {
+    if (generate_task.length > 0) {
+      const param = generate_task[0]
+      await send_action(param)
+      generate_task.shift()
+    }
+
+    await new Promise(r => setTimeout(r, 1000))
+  }
+}
+
+onUnmounted(() => {
+  isRunning = false
+})
+
+beginLoop()
 </script>
 
 <style scoped>
@@ -254,6 +284,7 @@ async function generate () {
 
 }
 .right {
+  max-width: 70vw;
   flex-grow: 1;
 }
 .tag-input {

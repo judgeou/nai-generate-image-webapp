@@ -31,6 +31,24 @@ const artist_tags_styles = [
   },
   {
     tags: 'artist:morikura_en, [artist:ogipote], artist:qian_wu_atai'
+  },
+  {
+    tags: 'artist:morikura_en, [artist:ogipote], artist:e20'
+  },
+  {
+    tags: 'artist:hokori_sakuni'
+  },
+  {
+    tags: 'artist:kanda_done'
+  },
+  {
+    tags: 'artist:ningen_mame,artist:ciloranko,[artist:sho_(sho_lwlw)]'
+  },
+  {
+    tags: 'arist:henreader,artist:baku-p,artist:tyakomes'
+  },
+  {
+    tags: '[[izumi tsubasu]] [[[fkey]]] [loli]] [mashiroiro symphony sena airi]'
   }
 ]
 
