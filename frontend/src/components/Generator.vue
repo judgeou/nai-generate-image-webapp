@@ -11,11 +11,16 @@
         
         <select v-model="artist_tag">
           <option value="">None</option>
-          <option v-for="item in artist_tags_styles" :value="item.tags">{{ item.tags.slice(0, 30) }}...</option>
+          <option v-for="item in artist_tags_styles" :value="item.tags">{{ item.tags.slice(0, 40) }}...</option>
         </select>
       </div>
       <div class="row">
         <textarea cols="50" rows="10" v-model="main_tag"></textarea>
+      </div>
+      <div class="row">
+        <select v-model="size_id">
+          <option v-for="item in size_options" :value="item.id">{{ item.label }}</option>
+        </select>
       </div>
       <div class="row">
         <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="generate">Generate</button>
@@ -55,6 +60,33 @@ function watch_save_to_localstorage (name: string, ref_obj: Ref) {
   })
 }
 
+const size_options = [
+  {
+    id: '1',
+    label: '832 x 1216',
+    width: 832,
+    height: 1216,
+    enhance_width: 1280,
+    enhance_height: 1856
+  },
+  {
+    id: '2',
+    label: '1216 x 832',
+    width: 1216,
+    height: 832,
+    enhance_width: 1856,
+    enhance_height: 1280
+  },
+  {
+    id: '3',
+    label: '1024 x 1024',
+    width: 1024,
+    height: 1024,
+    enhance_width: 1856,
+    enhance_height: 1280
+  }
+]
+
 const authorization = load_from_localstorage('authorization', '')
 const quality_tag = ref('very aesthetic')
 const artist_tag = ref('')
@@ -63,6 +95,7 @@ const isGenerating = ref(false)
 const image_src = ref(example_image)
 const is_auto_save = ref(false)
 const is_blur_image = ref(false)
+const size_id = ref('1')
 
 const image_div_width_1 = '400px'
 const image_div_width_2 = '832px'
@@ -83,6 +116,21 @@ async function post_json (path: string, data: any) {
   })
 
   return res
+}
+
+function notifi (img_url: string) {
+  if (Notification.permission === "granted") {
+    var notification = new Notification("新消息！", {
+      icon: "/novelai-round.png", // 小图标
+      image: img_url, // 大图片,
+      silent: true
+    });
+
+    notification.onclick = function() {
+      window.focus()
+      this.close()
+    };
+  }
 }
 
 function switch_size () {
@@ -135,7 +183,12 @@ async function enhance () {
       },
       authorization: authorization.value
     }
+
+    const select_size = size_options.find(item => item.id === size_id.value)
     const seed = Math.floor(Math.random() * Math.pow(2, 31))
+
+    post_param.nai_param.parameters.width = select_size!.enhance_width
+    post_param.nai_param.parameters.height = select_size!.enhance_height
     post_param.nai_param.parameters.seed = seed
     post_param.nai_param.parameters.extra_noise_seed = seed
     post_param.nai_param.parameters.image = image_to_base64url().split(',')[1]
@@ -151,6 +204,8 @@ async function enhance () {
     if (is_auto_save.value) {
       downloadImage(objurl)
     }
+
+    notifi(objurl)
   } finally {
     isGenerating.value = false
   }
@@ -167,7 +222,11 @@ async function generate () {
       },
       authorization: authorization.value
     }
+    const select_size = size_options.find(item => item.id === size_id.value)
+
     post_param.nai_param.parameters.seed = Math.floor(Math.random() * Math.pow(2, 31))
+    post_param.nai_param.parameters.width = select_size!.width
+    post_param.nai_param.parameters.height = select_size!.height
     const res = await post_json('/api/generate-image', post_param)
 
     const filename = await res.text()
@@ -179,6 +238,8 @@ async function generate () {
     if (is_auto_save.value) {
       downloadImage(objurl)
     }
+
+    notifi(objurl)
   } finally {
     isGenerating.value = false
   }
@@ -190,7 +251,7 @@ async function generate () {
   filter: blur(20px);
 }
 .left {
-  flex-grow: 1;
+
 }
 .right {
   flex-grow: 1;

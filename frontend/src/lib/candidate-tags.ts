@@ -25,6 +25,12 @@ const artist_tags_styles = [
   },
   {
     tags: 'artist:sincos, [artist:morikura_en]'
+  },
+  {
+    tags: '[[artist:goldowl]]'
+  },
+  {
+    tags: 'artist:morikura_en, [artist:ogipote], artist:qian_wu_atai'
   }
 ]
 
