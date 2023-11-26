@@ -24,16 +24,19 @@ const artist_tags_styles = [
     tags: 'artist:morikura_en, [artist:ogipote]'
   },
   {
-    tags: 'artist:sincos, [artist:morikura_en]'
-  },
-  {
-    tags: '[[artist:goldowl]]'
+    tags: 'artist:morikura_en, [artist:ogipote], nijisanji'
   },
   {
     tags: 'artist:morikura_en, [artist:ogipote], artist:qian_wu_atai'
   },
   {
     tags: 'artist:morikura_en, [artist:ogipote], artist:e20'
+  },
+  {
+    tags: '[artist:morikura_en], artist:sincos'
+  },
+  {
+    tags: '[[artist:goldowl]]'
   },
   {
     tags: 'artist:hokori_sakuni'
@@ -55,3 +58,7 @@ const artist_tags_styles = [
 export {
   artist_tags_styles
 }
+
+// artist:arata_(xin) 变厚
+// artist:sazaki_ichiri 
+// artist:emia_(castilla)

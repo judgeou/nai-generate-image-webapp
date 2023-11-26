@@ -11,7 +11,7 @@
         
         <select v-model="artist_tag">
           <option value="">None</option>
-          <option v-for="item in artist_tags_styles" :value="item.tags">{{ item.tags.slice(0, 40) }}...</option>
+          <option v-for="item in artist_tags_styles" :title="item.tags" :value="item.tags">{{ item.tags.slice(0, 40) }}...</option>
         </select>
       </div>
       <div class="row">
@@ -22,12 +22,17 @@
           <option v-for="item in size_options" :value="item.id">{{ item.label }}</option>
         </select>
 
+        <input type="number" placeholder="Generate Number" v-model="generate_number" style="width: 50px;">
+
         队列：{{ generate_task.length }}
       </div>
       <div class="row">
-        <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="generate">Generate</button>
+        <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="generate(generate_number)">Generate</button>
         <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="enhance">Enhance</button>
         <button style="width: 100px; height: 40px;"  @click="generate_task.length = 0">Clear</button>
+        <button style="height: 40px;" @click="xyz_batch">xyz_batch</button>
+      </div>
+      <div>
         <label>
           <input type="checkbox" v-model="is_auto_save">
           Auto Save
@@ -36,12 +41,15 @@
           <input type="checkbox" v-model="is_blur_image">
           Blur Image
         </label>
+
+        Opacity: <input type="number" v-model="img_opacity" min="0" max="10" >
+        Padding: <input type="number" v-model="img_padding" min="0" max="100">
       </div>
     </div>
 
-    <div class="right">
+    <div class="right" :style="{ opacity: Number(img_opacity) / 10 }">
       <div v-for="item in img_list" :style="{ width: image_div_width, display: 'inline-block' }" @click="switch_size">
-        <img ref="el_image" :class="{ blur: is_blur_image }" style="width: 100%;" :src="item" alt="ai anime image">
+        <img ref="el_image" :class="{ blur: is_blur_image }" style="width: 100%;" :style="{ padding: `${img_padding}px` }" :src="item" alt="ai anime image">
       </div>
     </div>
   </div>
@@ -51,7 +59,7 @@
 import { ref, Ref, watch, reactive, onUnmounted } from 'vue'
 import { artist_tags_styles } from '../lib/candidate-tags'
 import { get_default_input, get_default_img2img } from '../lib/default-input'
-// import example_image from '../assets/example.webp'
+import example_image from '../assets/example.webp'
 
 const default_input_one = get_default_input()
 
@@ -105,6 +113,9 @@ const isGenerating = ref(false)
 const is_auto_save = ref(true)
 const is_blur_image = ref(false)
 const size_id = ref('1')
+const generate_number = ref(2)
+const img_opacity = ref(load_from_localstorage('img_opacity', '10'))
+const img_padding = ref(load_from_localstorage('img_padding', '8'))
 
 const image_div_width_1 = '400px'
 const image_div_width_2 = '832px'
@@ -112,10 +123,12 @@ const image_div_width = ref(image_div_width_1)
 const el_image = ref<HTMLImageElement>()
 
 const generate_task = reactive([] as SendParam[])
-const img_list = reactive([] as string[])
+const img_list = reactive([ example_image ] as string[])
 let isRunning = true
 
 watch_save_to_localstorage('authorization', authorization)
+watch_save_to_localstorage('img_opacity', img_opacity)
+watch_save_to_localstorage('img_padding', img_padding)
 
 async function post_json (path: string, data: any) {
   const headers = {
@@ -213,8 +226,8 @@ async function enhance () {
   }
 }
 
-async function generate () {
-  {
+async function generate (num = 1) {
+  for (let i = 0; i < num; i++) {
     const default_input = get_default_input()
     const tags = [ quality_tag.value, artist_tag.value, main_tag.value ].join(', ')
     const post_param = {
@@ -231,7 +244,6 @@ async function generate () {
     post_param.nai_param.parameters.height = select_size!.height
 
     generate_task.push(post_param)
-
   }
 }
 
@@ -255,6 +267,46 @@ async function send_action (post_param: SendParam) {
 
   const t2 = new Date()
   notifi(objurl, t2.getTime() - t1.getTime())
+}
+
+async function xyz_batch () {
+  const image_class_tags = [
+    ['black_hair', 'white_hair', 'blonde_hair', 'red_hair', 'blue_hair', 'green_bair', 'purple_hair'],
+    ['long_hair', 'short_hair'],
+    ['indoors', 'outdoors', 'simple_background, white_background'],
+    ['portrait', 'full_body, white_pantyhose', 'full_body black_pantyhose']
+  ]
+
+  const all_combines = [] as string[]
+
+  for (let t1 of image_class_tags[0]) {
+    for (let t2 of image_class_tags[1]) {
+      for (let t3 of image_class_tags[2]) {
+        for (let t4 of image_class_tags[3]) {
+          all_combines.push([ t1, t2, t3, t4 ].join(', '))
+        }
+      }
+    }
+  }
+
+  for (let base_tag of all_combines) {
+    const default_input = get_default_input()
+    const tags = [ quality_tag.value, artist_tag.value, main_tag.value, base_tag ].join(', ')
+    const post_param = {
+      nai_param: {
+        ...default_input,
+        input: tags
+      },
+      authorization: authorization.value
+    }
+    const select_size = size_options.find(item => item.id === size_id.value)
+
+    post_param.nai_param.parameters.seed = Math.floor(Math.random() * Math.pow(2, 31))
+    post_param.nai_param.parameters.width = select_size!.width
+    post_param.nai_param.parameters.height = select_size!.height
+
+    generate_task.push(post_param)
+  }
 }
 
 async function beginLoop () {
