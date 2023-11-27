@@ -48,8 +48,8 @@
     </div>
 
     <div class="right" :style="{ opacity: Number(img_opacity) / 10 }">
-      <div v-for="item in img_list" :style="{ width: image_div_width, display: 'inline-block' }" @click="switch_size">
-        <img ref="el_image" :class="{ blur: is_blur_image }" style="width: 100%;" :style="{ padding: `${img_padding}px` }" :src="item" alt="ai anime image">
+      <div v-for="item in img_list" :style="{ width: image_div_width, display: 'inline-block', padding: `${img_padding}px` }" @click="switch_size">
+        <img ref="el_image" :class="{ blur: is_blur_image }" style="width: 100%;" :src="item" alt="ai anime image">
       </div>
     </div>
   </div>
