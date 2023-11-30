@@ -6,7 +6,7 @@ function get_default_input () {
     "parameters": {
       "width": 832,
       "height": 1216,
-      "scale": 5,
+      "scale": 4,
       "sampler": "k_dpmpp_sde",
       "steps": 28,
       "n_samples": 1,

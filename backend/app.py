@@ -29,6 +29,17 @@ app = Flask(__name__,
             static_folder='../frontend/dist',  # 设置静态文件夹为前端构建目录
             template_folder='../frontend/dist') # 设置模板目录为前端构建目录
 
+@app.after_request
+def add_header(response):
+
+    ext = os.path.splitext(request.path)[1]
+    # 如果文件是 .jpg 或 .png，设置 Cache-Control 头
+    if ext in ['.jpg', '.png', '.webp']:
+        response.cache_control.max_age = 31536000  # 设置为1年
+        response.cache_control.public = True
+
+    return response
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):

@@ -11,7 +11,7 @@
         
         <select v-model="artist_tag">
           <option value="">None</option>
-          <option v-for="item in artist_tags_styles" :title="item.tags" :value="item.tags">{{ item.tags.slice(0, 40) }}...</option>
+          <option v-for="item in artist_tags_styles" :title="item.tags" :value="item.tags">{{ item.name || item.tags.slice(0, 40) }}...</option>
         </select>
       </div>
       <div class="row">
@@ -120,10 +120,11 @@ const img_padding = ref(load_from_localstorage('img_padding', '8'))
 const image_div_width_1 = '400px'
 const image_div_width_2 = '832px'
 const image_div_width = ref(image_div_width_1)
-const el_image = ref<HTMLImageElement>()
+const el_image = ref<HTMLImageElement[]>()
 
 const generate_task = reactive([] as SendParam[])
 const img_list = reactive([ example_image ] as string[])
+let t1 = new Date()
 let isRunning = true
 
 watch_save_to_localstorage('authorization', authorization)
@@ -144,12 +145,19 @@ async function post_json (path: string, data: any) {
   return res
 }
 
-function notifi (img_url: string, cost_time: number) {
-  if (Notification.permission === "granted") {
+function notifi (img_url: string | null, cost_time: number) {
+  const userAgent = navigator.userAgent
+  const is_android = /Android/i.test(userAgent);
+  
+  if (is_android) {
+    return
+  }
+
+  if (window.Notification && Notification.permission === "granted") {
     var notification = new Notification("新消息！", {
       body: `${(cost_time / 1000).toFixed(2)}s`,
       icon: "/novelai-round.png", // 小图标
-      image: img_url, // 大图片,
+      image: img_url || '/novelai-round.png', // 大图片,
       silent: true
     });
 
@@ -184,7 +192,7 @@ function downloadImage (url: string) {
 }
 
 function image_to_base64url () {
-  var img = el_image.value!
+  var img = el_image.value![0]
 
   var canvas = document.createElement("canvas");
   const default_img2img = get_default_img2img()
@@ -201,9 +209,12 @@ function image_to_base64url () {
 }
 
 async function enhance () {
+  t1 = new Date()
+
   {
     const default_img2img = get_default_img2img()
-    const tags = [ quality_tag.value, artist_tag.value, main_tag.value ].join(', ')
+    const mt = main_tag.value.replace(/\\\(/g, '(').replace(/\\\)/g, ')')
+    const tags = [ quality_tag.value, artist_tag.value, mt ].join(', ')
     const post_param = {
       nai_param: {
         ...default_img2img,
@@ -227,9 +238,12 @@ async function enhance () {
 }
 
 async function generate (num = 1) {
+  t1 = new Date()
+
   for (let i = 0; i < num; i++) {
     const default_input = get_default_input()
-    const tags = [ quality_tag.value, artist_tag.value, main_tag.value ].join(', ')
+    const mt = main_tag.value.replace(/\\\(/g, '(').replace(/\\\)/g, ')')
+    const tags = [ quality_tag.value, artist_tag.value, mt ].join(', ')
     const post_param = {
       nai_param: {
         ...default_input,
@@ -248,7 +262,6 @@ async function generate (num = 1) {
 }
 
 async function send_action (post_param: SendParam) {
-  const t1 = new Date()
   const res = await post_json('/api/generate-image', post_param)
 
   const filename = await res.text()
@@ -264,9 +277,6 @@ async function send_action (post_param: SendParam) {
   if (is_auto_save.value) {
     downloadImage(objurl)
   }
-
-  const t2 = new Date()
-  notifi(objurl, t2.getTime() - t1.getTime())
 }
 
 async function xyz_batch () {
@@ -315,6 +325,13 @@ async function beginLoop () {
       const param = generate_task[0]
       await send_action(param)
       generate_task.shift()
+
+      if (generate_task.length === 0) {
+        const t2 = new Date()
+        const t = t2.getTime() - t1.getTime()
+
+        notifi(null, t)
+      }
     }
 
     await new Promise(r => setTimeout(r, 1000))
