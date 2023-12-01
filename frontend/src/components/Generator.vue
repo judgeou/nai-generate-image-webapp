@@ -32,7 +32,7 @@
 
         <input type="number" placeholder="Generate Number" v-model="generate_number" style="width: 50px;">
 
-        队列：{{ generate_task.length }}
+        排队：{{ generate_task.length }} 正在运行：{{ runing_task.length }}
       </div>
       <div class="row">
         <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="generate(generate_number)">Generate</button>
@@ -132,6 +132,7 @@ const image_div_width = ref(image_div_width_1)
 const el_image = ref<HTMLImageElement[]>()
 
 const generate_task = reactive([] as SendParam[])
+const runing_task = reactive([] as SendParam[])
 const img_list = reactive([ example_image ] as string[])
 let t1 = new Date()
 let isRunning = true
@@ -340,17 +341,19 @@ async function xyz_batch () {
 
 async function beginLoop () {
   while (isRunning) {
-    if (generate_task.length > 0) {
-      const param = generate_task[0]
-      await send_action(param)
-      generate_task.shift()
+    if (generate_task.length > 0 && runing_task.length < 2) {
+      const param = generate_task.shift()!
+      runing_task.push(param)
+      send_action(param).then(() => {
+        runing_task.splice(runing_task.indexOf(param), 1)
 
-      if (generate_task.length === 0) {
-        const t2 = new Date()
-        const t = t2.getTime() - t1.getTime()
+        if (generate_task.length === 0 && runing_task.length === 0) {
+          const t2 = new Date()
+          const t = t2.getTime() - t1.getTime()
 
-        notifi(null, t)
-      }
+          notifi(null, t)
+        }
+      })
     }
 
     await new Promise(r => setTimeout(r, 1000))
