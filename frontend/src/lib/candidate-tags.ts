@@ -7,7 +7,11 @@ const artist_tags_styles = [
   },
   {
     name: '厚涂1',
-    tags: '[[artist:omone_hokoma_agm,artist:free_style_(yohan1754)]],{{artist:shion_(mirudakemann), [artist:wlop],{artist:asakuraf},[artist:as109]}}'
+    tags: '[[omone_hokoma_agm,free_style_(yohan1754)]],{shion_(mirudakemann), [wlop],{asakuraf}}'
+  },
+  {
+    name: '厚涂2',
+    tags: '[omone_hokoma_agm], [free_style_(yohan1754)], {asakuraf}, as109'
   },
   {
     tags: 'artist:eufoniuz,[artist:ogipote],artist:henreader,[artist:sy4],artist:asou_(asabu202)'
@@ -69,8 +73,19 @@ const artist_tags_styles = [
   }
 ]
 
+const effect_tags = [
+  {
+    name: '封面鱼眼',
+    tags: 'album cover, blurry, fisheye'
+  },{
+    name: '封面',
+    tags: 'album cover, blurry'
+  }
+]
+
 export {
-  artist_tags_styles
+  artist_tags_styles,
+  effect_tags
 }
 
 // artist:arata_(xin) 变厚

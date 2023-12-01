@@ -15,6 +15,14 @@
         </select>
       </div>
       <div class="row">
+        <select v-model="effect_tag">
+          <option value="">None</option>
+          <option v-for="item in effect_tags" :title="item.tags" :value="item.tags">{{ item.name }}</option>
+        </select>
+
+        <button @click="paste_to_tags">paste</button>
+      </div>
+      <div class="row">
         <textarea cols="50" rows="10" v-model="main_tag"></textarea>
       </div>
       <div class="row">
@@ -57,7 +65,7 @@
 
 <script setup lang="ts">
 import { ref, Ref, watch, reactive, onUnmounted } from 'vue'
-import { artist_tags_styles } from '../lib/candidate-tags'
+import { artist_tags_styles, effect_tags } from '../lib/candidate-tags'
 import { get_default_input, get_default_img2img } from '../lib/default-input'
 import example_image from '../assets/example.webp'
 
@@ -108,6 +116,7 @@ const size_options = [
 const authorization = load_from_localstorage('authorization', '')
 const quality_tag = ref('very aesthetic')
 const artist_tag = ref('')
+const effect_tag = ref('')
 const main_tag = ref('1girl, solo')
 const isGenerating = ref(false)
 const is_auto_save = ref(true)
@@ -143,6 +152,12 @@ async function post_json (path: string, data: any) {
   })
 
   return res
+}
+
+function paste_to_tags () {
+  navigator.clipboard.readText().then(text => {
+    main_tag.value = text
+  })
 }
 
 function notifi (img_url: string | null, cost_time: number) {
@@ -208,13 +223,18 @@ function image_to_base64url () {
   return dataURL
 }
 
+function get_tags_text () {
+  const mt = main_tag.value.replace(/\\\(/g, '(').replace(/\\\)/g, ')')
+  const tags = [ quality_tag.value, artist_tag.value, effect_tag.value, mt ].join(', ')
+  return tags
+}
+
 async function enhance () {
   t1 = new Date()
 
   {
     const default_img2img = get_default_img2img()
-    const mt = main_tag.value.replace(/\\\(/g, '(').replace(/\\\)/g, ')')
-    const tags = [ quality_tag.value, artist_tag.value, mt ].join(', ')
+    const tags = get_tags_text()
     const post_param = {
       nai_param: {
         ...default_img2img,
@@ -242,8 +262,7 @@ async function generate (num = 1) {
 
   for (let i = 0; i < num; i++) {
     const default_input = get_default_input()
-    const mt = main_tag.value.replace(/\\\(/g, '(').replace(/\\\)/g, ')')
-    const tags = [ quality_tag.value, artist_tag.value, mt ].join(', ')
+    const tags = get_tags_text()
     const post_param = {
       nai_param: {
         ...default_input,
