@@ -1,40 +1,64 @@
+import cokecoco_1 from '../assets/artist-preview/cokecoco_1.webp'
+import kedama_milk_1 from '../assets/artist-preview/kedama_milk_1.webp'
+import kedama_milk_2 from '../assets/artist-preview/kedama_milk_2.webp'
+import mirage_1 from '../assets/artist-preview/mirage_1.webp'
+import houkisei_1 from '../assets/artist-preview/houkisei_1.webp'
+import tantan_1 from '../assets/artist-preview/tantan_1.webp'
+import houtu_1 from '../assets/artist-preview/houtu_1.webp'
+import jianyue_1 from '../assets/artist-preview/jianyue_1.webp'
+import loli_1 from '../assets/artist-preview/loli_1.webp'
+import morikura_1 from '../assets/artist-preview/morikura_1.webp'
+
 const artist_tags_styles = [
   {
-    tags: 'cokecoco, haoni,[artist:kedama milk],{wlop}[[artist:As109]]'
+    name: 'cokecoco_1',
+    tags: 'cokecoco, haoni,[artist:kedama milk],{wlop}[[artist:As109]]',
+    img: cokecoco_1
   },
   {
-    tags: 'kedama_milk, [fuzichoco], [ogipote]'
+    name: 'kedama milk_1',
+    tags: 'kedama_milk, [fuzichoco], [ogipote]',
+    img: kedama_milk_1
   },
   {
-    tags: 'kedama_milk, wlop, [ogipote]'
+    name: 'kedama milk_2',
+    tags: 'kedama_milk, wlop, [ogipote]',
+    img: kedama_milk_2
   },
   {
-    tags: 'mirage_(rairudiseu) , nasii'
+    name: 'mirage_1',
+    tags: 'year_2023, mirage_(rairudiseu), nasii',
+    img: mirage_1
   },
   {
     name: 'houkisei',
-    tags: 'year_2023, torino_aqua, houkisei'
+    tags: 'year_2023, torino_aqua, houkisei',
+    img: houkisei_1
   },
   {
-    tags: 'tantan_men_(dragon),satou_(3366_s) ,yuizaki_kazuya,jyt,year_2023'
+    name: 'tantan_1',
+    tags: 'tantan_men_(dragon),satou_(3366_s) ,yuizaki_kazuya,jyt,year_2023',
+    img: tantan_1
   },
   {
     name: '厚涂1',
-    tags: '[[omone_hokoma_agm,free_style_(yohan1754)]],{shion_(mirudakemann), [wlop],{asakuraf}}'
-  },
-  {
-    name: '厚涂2',
-    tags: '[omone_hokoma_agm], [free_style_(yohan1754)], {asakuraf}, as109'
+    tags: '[[omone_hokoma_agm,free_style_(yohan1754)]],{shion_(mirudakemann), [wlop],{asakuraf}}',
+    img: houtu_1
   },
   {
     name: '简约',
-    tags: 'tomari_(veryberry00), najar, eluthel,jyt'
+    tags: 'tomari_(veryberry00), najar, eluthel,jyt',
+    img: jianyue_1
   },
   {
-    tags: 'artist:baku-p, loli'
+    name: 'loli_1',
+    tags: 'artist:baku-p, loli',
+    img: loli_1
   },
   {
-    tags: '{artist:morikura_en}, [artist:ogipote]'
+    name: 'morikura_1',
+    tags: '{artist:morikura_en}, [artist:ogipote]',
+    img: morikura_1
   },
   {
     tags: 'artist:morikura_en, [artist:ogipote], nijisanji'
@@ -100,9 +124,19 @@ const effect_tags = [
   }
 ]
 
+interface ArtistItem {
+  name?: string
+  tags: string
+  img?: string
+}
+
 export {
   artist_tags_styles,
   effect_tags
+}
+
+export type {
+  ArtistItem
 }
 
 // artist:arata_(xin) 变厚

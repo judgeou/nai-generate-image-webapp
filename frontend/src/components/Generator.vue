@@ -1,4 +1,7 @@
 <template>
+  <div class="fixed-img-preview" :style="{ opacity: Number(img_opacity) / 10 }" v-show="is_show_artist_preview">
+    <img v-if="artist_preview_img" :src="artist_preview_img" />
+  </div>
   <div style="display: flex; flex-wrap: wrap;">
     <div class="left">
       <div class="row">
@@ -13,13 +16,12 @@
       <div class="row">
         <input type="text" class="tag-input" v-model="artist_tag" placeholder="artist-tag">
       </div>
-      <div class="row">        
-        <select v-if="false" v-model="artist_tag">
-          <option value="">None</option>
-          <option v-for="item in artist_tags_styles" :title="item.tags" :value="item.tags">{{ item.name || item.tags.slice(0, 40) }}...</option>
-        </select>
-
-        <div class="artist-item" v-for="item in artist_tags_styles">
+      <div class="row" style="width: 80vw;">
+        <div class="artist-item" 
+        v-for="item in artist_tags_styles"
+        @click="click_artist(item)"
+        @mouseover="on_artist_over(item)"
+        @mouseout="on_artist_out">
           {{ item.name || item.tags.slice(0, 40) }}
         </div>
       </div>
@@ -79,7 +81,7 @@
 
 <script setup lang="ts">
 import { ref, Ref, watch, reactive, onUnmounted } from 'vue'
-import { artist_tags_styles, effect_tags } from '../lib/candidate-tags'
+import { artist_tags_styles, effect_tags, ArtistItem } from '../lib/candidate-tags'
 import { get_default_input, get_default_img2img } from '../lib/default-input'
 import example_image from '../assets/example.webp'
 
@@ -148,6 +150,8 @@ const image_div_width_1 = '400px'
 const image_div_width_2 = '832px'
 const image_div_width = ref(image_div_width_1)
 const el_image = ref<HTMLImageElement[]>()
+const is_show_artist_preview = ref(false)
+const artist_preview_img = ref('')
 
 const generate_task = reactive([] as SendParam[])
 const runing_task = reactive([] as SendParam[])
@@ -158,6 +162,19 @@ let isRunning = true
 watch_save_to_localstorage('authorization', authorization)
 watch_save_to_localstorage('img_opacity', img_opacity)
 watch_save_to_localstorage('img_padding', img_padding)
+
+function click_artist (artist_item: ArtistItem) {
+  artist_tag.value = artist_item.tags
+}
+
+function on_artist_over (artist_item: ArtistItem) {
+  is_show_artist_preview.value = true
+  artist_preview_img.value = artist_item.img || ''
+}
+
+function on_artist_out () {
+  is_show_artist_preview.value = false
+}
 
 async function post_json (path: string, data: any) {
   const headers = {
@@ -392,6 +409,15 @@ beginLoop()
 </script>
 
 <style scoped>
+.fixed-img-preview {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+}
+.fixed-img-preview img {
+  width: 100%;
+}
 .artist-item {
   padding: 4px;
   border: 1px solid pink;
