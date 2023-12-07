@@ -7,7 +7,11 @@ import tantan_1 from '../assets/artist-preview/tantan_1.webp'
 import houtu_1 from '../assets/artist-preview/houtu_1.webp'
 import jianyue_1 from '../assets/artist-preview/jianyue_1.webp'
 import loli_1 from '../assets/artist-preview/loli_1.webp'
+import loli_2 from '../assets/artist-preview/loli_2.webp'
 import morikura_1 from '../assets/artist-preview/morikura_1.webp'
+import morikura_2 from '../assets/artist-preview/morikura_2.webp'
+import hokori_sakuni from '../assets/artist-preview/hokori_sakuni.webp'
+import kanda_done from '../assets/artist-preview/kanda_done.webp'
 
 const artist_tags_styles = [
   {
@@ -56,9 +60,27 @@ const artist_tags_styles = [
     img: loli_1
   },
   {
+    name: 'loli_2',
+    tags: 'arist:henreader,artist:baku-p,artist:tyakomes',
+    img: loli_2
+  },
+  {
     name: 'morikura_1',
     tags: '{artist:morikura_en}, [artist:ogipote]',
     img: morikura_1
+  },
+  {
+    name: 'morikura_2',
+    tags: '[artist:morikura_en], artist:sincos',
+    img: morikura_2
+  },
+  {
+    tags: 'artist:hokori_sakuni',
+    img: hokori_sakuni
+  },
+  {
+    tags: 'artist:kanda_done',
+    img: kanda_done
   },
   {
     tags: 'artist:morikura_en, [artist:ogipote], nijisanji'
@@ -70,9 +92,6 @@ const artist_tags_styles = [
     tags: 'artist:morikura_en, [artist:ogipote], artist:e20'
   },
   {
-    tags: '[artist:morikura_en], artist:sincos'
-  },
-  {
     tags: '[artist:morikura_en], artist:chiyingzai'
   },
   {
@@ -82,17 +101,7 @@ const artist_tags_styles = [
     tags: '[[artist:goldowl]]'
   },
   {
-    tags: 'artist:hokori_sakuni'
-  },
-  {
-    tags: 'artist:kanda_done'
-  },
-  {
     tags: 'artist:ningen_mame,artist:ciloranko,[artist:sho_(sho_lwlw)]'
-  },
-  {
-    name: 'loli_1',
-    tags: 'arist:henreader,artist:baku-p,artist:tyakomes'
   },
   {
     tags: '[[izumi tsubasu]] [[[fkey]]] [loli]] [mashiroiro symphony sena airi]'
