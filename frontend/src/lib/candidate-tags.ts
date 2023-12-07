@@ -1,9 +1,22 @@
 const artist_tags_styles = [
   {
-    tags: '{artist:tantan_men_(dragon)},{artist:ogipote},{artist:sy4},[artist:sumiyao_(amam)]'
+    tags: 'cokecoco, haoni,[artist:kedama milk],{wlop}[[artist:As109]]'
   },
   {
-    tags: '{artist:peip_(pepai)},[artist:onineko],[artist:sho_(sho_lwlw)],[artist:yuzuyomogi],{{{artist:tinker_bell_(pixiv_10956015)}}},{{{{artist:HaneRu}}}}'
+    tags: 'kedama_milk, [fuzichoco], [ogipote]'
+  },
+  {
+    tags: 'kedama_milk, wlop, [ogipote]'
+  },
+  {
+    tags: 'mirage_(rairudiseu) , nasii'
+  },
+  {
+    name: 'houkisei',
+    tags: 'year_2023, torino_aqua, houkisei'
+  },
+  {
+    tags: 'tantan_men_(dragon),satou_(3366_s) ,yuizaki_kazuya,jyt,year_2023'
   },
   {
     name: '厚涂1',
@@ -14,13 +27,14 @@ const artist_tags_styles = [
     tags: '[omone_hokoma_agm], [free_style_(yohan1754)], {asakuraf}, as109'
   },
   {
-    tags: 'artist:eufoniuz,[artist:ogipote],artist:henreader,[artist:sy4],artist:asou_(asabu202)'
+    name: '简约',
+    tags: 'tomari_(veryberry00), najar, eluthel,jyt'
   },
   {
     tags: 'artist:baku-p, loli'
   },
   {
-    tags: 'artist:morikura_en, [artist:ogipote]'
+    tags: '{artist:morikura_en}, [artist:ogipote]'
   },
   {
     tags: 'artist:morikura_en, [artist:ogipote], nijisanji'
@@ -79,7 +93,10 @@ const effect_tags = [
     tags: 'album cover, blurry, fisheye'
   },{
     name: '封面',
-    tags: 'album cover, blurry'
+    tags: 'album cover'
+  },{
+    name: '官方光影景深',
+    tags: 'official art, depth of field,{cinematic lighting},dutch angle'
   }
 ]
 

@@ -12,7 +12,7 @@ function get_default_input () {
       "n_samples": 1,
       "ucPreset": 2,
       "qualityToggle": false,
-      "sm": false,
+      "sm": true,
       "sm_dyn": false,
       "dynamic_thresholding": false,
       "controlnet_strength": 1,

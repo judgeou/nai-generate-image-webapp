@@ -5,14 +5,23 @@
         <input type="password" placeholder="authorization" v-model="authorization">
       </div>
       <div class="row">
+        <input type="text" class="tag-input" v-model="character_tag" placeholder="character_tag">
+      </div>
+      <div class="row">
         <input type="text" class="tag-input" v-model="quality_tag" placeholder="quality_tag">
       </div>
       <div class="row">
-        
-        <select v-model="artist_tag">
+        <input type="text" class="tag-input" v-model="artist_tag" placeholder="artist-tag">
+      </div>
+      <div class="row">        
+        <select v-if="false" v-model="artist_tag">
           <option value="">None</option>
           <option v-for="item in artist_tags_styles" :title="item.tags" :value="item.tags">{{ item.name || item.tags.slice(0, 40) }}...</option>
         </select>
+
+        <div class="artist-item" v-for="item in artist_tags_styles">
+          {{ item.name || item.tags.slice(0, 40) }}
+        </div>
       </div>
       <div class="row">
         <select v-model="effect_tag">
@@ -24,6 +33,11 @@
       </div>
       <div class="row">
         <textarea cols="50" rows="10" v-model="main_tag"></textarea>
+      </div>
+      <div>
+        <label><input type="checkbox" v-model="sm" >sm</label>
+        <label><input type="checkbox" v-model="sm_dyn" >sm_dyn</label>
+        <input type="number" min="1" max="20" step="0.5" v-model="scale" placeholder="scale">
       </div>
       <div class="row">
         <select v-model="size_id">
@@ -114,6 +128,7 @@ const size_options = [
 ]
 
 const authorization = load_from_localstorage('authorization', '')
+const character_tag = ref('')
 const quality_tag = ref('very aesthetic')
 const artist_tag = ref('')
 const effect_tag = ref('')
@@ -125,6 +140,9 @@ const size_id = ref('1')
 const generate_number = ref(2)
 const img_opacity = ref(load_from_localstorage('img_opacity', '10'))
 const img_padding = ref(load_from_localstorage('img_padding', '8'))
+const sm = ref(false)
+const sm_dyn = ref(false)
+const scale = ref(4.0)
 
 const image_div_width_1 = '400px'
 const image_div_width_2 = '832px'
@@ -225,9 +243,9 @@ function image_to_base64url () {
 }
 
 function get_tags_text () {
-  const mt = main_tag.value.replace(/\\\(/g, '(').replace(/\\\)/g, ')')
-  const tags = [ quality_tag.value, artist_tag.value, effect_tag.value, mt ].join(', ')
-  return tags
+  const mt = main_tag.value
+  const tags = [ character_tag.value, artist_tag.value, effect_tag.value, quality_tag.value, mt ].join(', ')
+  return tags.replace(/\\\(/g, '(').replace(/\\\)/g, ')')
 }
 
 async function enhance () {
@@ -252,6 +270,9 @@ async function enhance () {
     post_param.nai_param.parameters.seed = seed
     post_param.nai_param.parameters.extra_noise_seed = seed
     post_param.nai_param.parameters.image = image_to_base64url().split(',')[1]
+    post_param.nai_param.parameters.sm = sm.value
+    post_param.nai_param.parameters.sm_dyn = sm_dyn.value
+    post_param.nai_param.parameters.scale = scale.value
 
     generate_task.push(post_param)
 
@@ -276,6 +297,9 @@ async function generate (num = 1) {
     post_param.nai_param.parameters.seed = Math.floor(Math.random() * Math.pow(2, 31))
     post_param.nai_param.parameters.width = select_size!.width
     post_param.nai_param.parameters.height = select_size!.height
+    post_param.nai_param.parameters.sm = sm.value
+    post_param.nai_param.parameters.sm_dyn = sm_dyn.value
+    post_param.nai_param.parameters.scale = scale.value
 
     generate_task.push(post_param)
   }
@@ -368,6 +392,11 @@ beginLoop()
 </script>
 
 <style scoped>
+.artist-item {
+  padding: 4px;
+  border: 1px solid pink;
+  cursor: pointer;
+}
 .blur {
   filter: blur(20px);
 }
@@ -382,6 +411,10 @@ beginLoop()
   width: 400px;
 }
 .row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 8px;
 }
 </style>
