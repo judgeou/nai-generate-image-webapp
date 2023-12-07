@@ -309,7 +309,7 @@ async function send_action (post_param: SendParam) {
   const res = await post_json('/api/generate-image', post_param)
 
   const filename = await res.text()
-  const objurl = `/${filename}`
+  const objurl = `/api/image/${filename}`
 
   // URL.revokeObjectURL(image_src.value)
   img_list.unshift(objurl)

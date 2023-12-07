@@ -22,12 +22,12 @@ def unzipone (zip_bytes: bytes):
 
 nai_session = requests.Session()
 proxies = {
-  "https": "http://127.0.0.1:1081"
+
 }
 
 app = Flask(__name__,
-            static_folder='../frontend/dist',  # 设置静态文件夹为前端构建目录
-            template_folder='../frontend/dist') # 设置模板目录为前端构建目录
+            static_folder='../frontend/dist',
+            template_folder='../frontend/dist')
 
 @app.after_request
 def add_header(response):
@@ -39,6 +39,10 @@ def add_header(response):
         response.cache_control.public = True
 
     return response
+
+@app.route('/api/image/<path:filename>')
+def out_image_save (filename):
+    return send_from_directory('../image-save', filename)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -75,7 +79,7 @@ def generate_image():
         pngdata = unzipone(res.content)
         img_filename = str(uuid.uuid4()) + '.png'
 
-        with open('../frontend/dist/' + img_filename, 'wb') as file:
+        with open('../image-save/' + img_filename, 'wb') as file:
             file.write(pngdata)
 
         return img_filename
