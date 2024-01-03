@@ -12,7 +12,7 @@ function get_default_input () {
       "n_samples": 1,
       "ucPreset": 2,
       "qualityToggle": false,
-      "sm": true,
+      "sm": false,
       "sm_dyn": false,
       "dynamic_thresholding": false,
       "controlnet_strength": 1,
@@ -22,7 +22,7 @@ function get_default_input () {
       "cfg_rescale": 0,
       "noise_schedule": "native",
       "seed": 2348809611,
-      "negative_prompt": "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, unfinished, chromatic aberration, extra digits, artistic error, scan, [abstract], {worst quality}, jpeg artifacts, {bad quality}, normal quality,"
+      "negative_prompt": "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, unfinished, chromatic aberration, extra digits, artistic error, scan, [abstract], {worst quality}, jpeg artifacts, {bad quality}, normal quality, bad anatomy, bad hands"
     }
   }
 }
@@ -41,7 +41,7 @@ function get_default_img2img () {
         "seed": 2544659167,
         "n_samples": 1,
         "strength": 0.5,
-        "noise": 0,
+        "noise": 0.1,
         "ucPreset": 2,
         "qualityToggle": false,
         "sm": false,
@@ -55,7 +55,7 @@ function get_default_img2img () {
         "noise_schedule": "native",
         "image": "",
         "extra_noise_seed": 2544659167,
-        "negative_prompt": "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, unfinished, chromatic aberration, extra digits, artistic error, scan, [abstract], {worst quality}, jpeg artifacts, {bad quality}, normal quality,"
+        "negative_prompt": "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, unfinished, chromatic aberration, extra digits, artistic error, scan, [abstract], {worst quality}, jpeg artifacts, {bad quality}, normal quality, bad anatomy, bad hands"
     }
   }
 }

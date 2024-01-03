@@ -19,7 +19,7 @@
       <div class="row" style="width: 80vw;">
         <div class="artist-item" 
         v-for="item in artist_tags_styles"
-        @click="click_artist(item)"
+        @click="click_artist(item, $event)"
         @mouseover="on_artist_over(item)"
         @mouseout="on_artist_out">
           {{ item.name || item.tags.slice(0, 40) }}
@@ -55,6 +55,7 @@
         <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="enhance">Enhance</button>
         <button style="width: 100px; height: 40px;"  @click="generate_task.length = 0">Clear</button>
         <button style="height: 40px;" @click="xyz_batch">xyz_batch</button>
+        <button style="height: 40px;" @click="randomBatch">Random</button>
       </div>
       <div>
         <label>
@@ -83,7 +84,7 @@
 import { ref, Ref, watch, reactive, onUnmounted } from 'vue'
 import { artist_tags_styles, effect_tags, ArtistItem } from '../lib/candidate-tags'
 import { get_default_input, get_default_img2img } from '../lib/default-input'
-import example_image from '../assets/example.webp'
+// import example_image from '../assets/example.webp'
 
 const default_input_one = get_default_input()
 
@@ -126,6 +127,14 @@ const size_options = [
     height: 1024,
     enhance_width: 1856,
     enhance_height: 1280
+  },
+  {
+    id: '4',
+    label: '1024 x 1536',
+    width: 1024,
+    height: 1536,
+    enhance_width: 1280,
+    enhance_height: 1856
   }
 ]
 
@@ -146,7 +155,7 @@ const sm = ref(false)
 const sm_dyn = ref(false)
 const scale = ref(4.0)
 
-const image_div_width_1 = '400px'
+const image_div_width_1 = '23%'
 const image_div_width_2 = '832px'
 const image_div_width = ref(image_div_width_1)
 const el_image = ref<HTMLImageElement[]>()
@@ -155,7 +164,7 @@ const artist_preview_img = ref('')
 
 const generate_task = reactive([] as SendParam[])
 const runing_task = reactive([] as SendParam[])
-const img_list = reactive([ example_image ] as string[])
+const img_list = reactive([ ] as string[])
 let t1 = new Date()
 let isRunning = true
 
@@ -163,8 +172,12 @@ watch_save_to_localstorage('authorization', authorization)
 watch_save_to_localstorage('img_opacity', img_opacity)
 watch_save_to_localstorage('img_padding', img_padding)
 
-function click_artist (artist_item: ArtistItem) {
-  artist_tag.value = artist_item.tags
+function click_artist (artist_item: ArtistItem, e: MouseEvent) {
+  if (e.metaKey || e.ctrlKey) {
+    artist_tag.value += ', ' + artist_item.tags
+  } else {
+    artist_tag.value = artist_item.tags
+  }
 }
 
 function on_artist_over (artist_item: ArtistItem) {
@@ -323,9 +336,20 @@ async function generate (num = 1) {
 }
 
 async function send_action (post_param: SendParam) {
-  const res = await post_json('/api/generate-image', post_param)
+  let filename = ''
 
-  const filename = await res.text()
+  while (1) {
+    try {
+      const res = await post_json('/api/generate-image', post_param)
+      filename = await res.text()
+      if (/.+\.png/.test(filename)) {
+        break
+      }
+    } catch {
+      continue
+    }
+  }
+  
   const objurl = `/api/image/${filename}`
 
   // URL.revokeObjectURL(image_src.value)
@@ -342,10 +366,11 @@ async function send_action (post_param: SendParam) {
 
 async function xyz_batch () {
   const image_class_tags = [
-    ['black_hair', 'white_hair', 'blonde_hair', 'red_hair', 'blue_hair', 'green_bair', 'purple_hair'],
+    ['multicolored_hair', ''],
     ['long_hair', 'short_hair'],
-    ['indoors', 'outdoors', 'simple_background, white_background'],
-    ['portrait', 'full_body, white_pantyhose', 'full_body black_pantyhose']
+    ['outdoors', 'indoors'],
+    ['zettai_ryouiki, thighhighs', 'full_body black_pantyhose', 'upper_body', 'full_body, white_pantyhose', 'topless'],
+    ['black_hair', 'white_hair', 'blonde_hair', 'red_hair', 'blue_hair']
   ]
 
   const all_combines = [] as string[]
@@ -354,7 +379,9 @@ async function xyz_batch () {
     for (let t2 of image_class_tags[1]) {
       for (let t3 of image_class_tags[2]) {
         for (let t4 of image_class_tags[3]) {
-          all_combines.push([ t1, t2, t3, t4 ].join(', '))
+          for (let t5 of image_class_tags[4]) {
+            all_combines.push([ t1, t2, t3, t4, t5 ].join(', '))
+          }
         }
       }
     }
@@ -362,7 +389,7 @@ async function xyz_batch () {
 
   for (let base_tag of all_combines) {
     const default_input = get_default_input()
-    const tags = [ quality_tag.value, artist_tag.value, main_tag.value, base_tag ].join(', ')
+    const tags = get_tags_text() + ', ' + base_tag
     const post_param = {
       nai_param: {
         ...default_input,
@@ -375,26 +402,40 @@ async function xyz_batch () {
     post_param.nai_param.parameters.seed = Math.floor(Math.random() * Math.pow(2, 31))
     post_param.nai_param.parameters.width = select_size!.width
     post_param.nai_param.parameters.height = select_size!.height
+    post_param.nai_param.parameters.sm = sm.value
+    post_param.nai_param.parameters.sm_dyn = sm_dyn.value
+    post_param.nai_param.parameters.scale = scale.value
 
     generate_task.push(post_param)
   }
 }
 
+async function randomBatch () {
+  const res1 = await post_json('http://localhost:5000/api/random/3', { "rating":"s","and_array":["1girl","solo"],"or_array":[["outdoors","indoors"]],"limit":100})
+  const posts = await res1.json()
+
+  for (let post of posts) {
+    const { tags } = post
+    main_tag.value = tags
+    generate(1)
+  }
+}
+
 async function beginLoop () {
   while (isRunning) {
-    if (generate_task.length > 0 && runing_task.length < 2) {
+    if (generate_task.length > 0 && runing_task.length < 1) {
       const param = generate_task.shift()!
+      
       runing_task.push(param)
-      send_action(param).then(() => {
-        runing_task.splice(runing_task.indexOf(param), 1)
+      await send_action(param)
+      runing_task.splice(runing_task.indexOf(param), 1)
 
-        if (generate_task.length === 0 && runing_task.length === 0) {
-          const t2 = new Date()
-          const t = t2.getTime() - t1.getTime()
+      if (generate_task.length === 0 && runing_task.length === 0) {
+        const t2 = new Date()
+        const t = t2.getTime() - t1.getTime()
 
-          notifi(null, t)
-        }
-      })
+        notifi(null, t)
+      }
     }
 
     await new Promise(r => setTimeout(r, 1000))
@@ -411,6 +452,7 @@ beginLoop()
 <style scoped>
 .fixed-img-preview {
   position: fixed;
+  z-index: -1;
   top: 0;
   right: 0;
   width: 400px;
@@ -430,7 +472,7 @@ beginLoop()
 
 }
 .right {
-  max-width: 70vw;
+  max-width: 99vw;
   flex-grow: 1;
 }
 .tag-input {

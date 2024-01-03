@@ -3,6 +3,7 @@ import kedama_milk_1 from '../assets/artist-preview/kedama_milk_1.webp'
 import kedama_milk_2 from '../assets/artist-preview/kedama_milk_2.webp'
 import mirage_1 from '../assets/artist-preview/mirage_1.webp'
 import houkisei_1 from '../assets/artist-preview/houkisei_1.webp'
+import houkisei_2 from '../assets/artist-preview/houkisei_2.webp'
 import tantan_1 from '../assets/artist-preview/tantan_1.webp'
 import houtu_1 from '../assets/artist-preview/houtu_1.webp'
 import jianyue_1 from '../assets/artist-preview/jianyue_1.webp'
@@ -10,8 +11,17 @@ import loli_1 from '../assets/artist-preview/loli_1.webp'
 import loli_2 from '../assets/artist-preview/loli_2.webp'
 import morikura_1 from '../assets/artist-preview/morikura_1.webp'
 import morikura_2 from '../assets/artist-preview/morikura_2.webp'
+import morikura_3 from '../assets/artist-preview/morikura_3.webp'
 import hokori_sakuni from '../assets/artist-preview/hokori_sakuni.webp'
 import kanda_done from '../assets/artist-preview/kanda_done.webp'
+import atdan_1 from '../assets/artist-preview/atdan_1.webp'
+import atdan_2 from '../assets/artist-preview/atdan_2.webp'
+import atdan_3 from '../assets/artist-preview/atdan_3.webp'
+import icwine_1 from '../assets/artist-preview/icwine_1.webp'
+import aibek_1 from '../assets/artist-preview/aibek_1.webp'
+import as109_1 from '../assets/artist-preview/as109_1.webp'
+import as109_2 from '../assets/artist-preview/as109_2.webp'
+import as109_3 from '../assets/artist-preview/as109_3.webp'
 
 const artist_tags_styles = [
   {
@@ -40,14 +50,38 @@ const artist_tags_styles = [
     img: houkisei_1
   },
   {
+    name: 'houkisei_2',
+    tags: 'rin_yuu,houkisei,year_2023',
+    img: houkisei_2
+  },
+  {
     name: 'tantan_1',
     tags: 'tantan_men_(dragon),satou_(3366_s) ,yuizaki_kazuya,jyt,year_2023',
     img: tantan_1
   },
   {
     name: '厚涂1',
-    tags: '[[omone_hokoma_agm,free_style_(yohan1754)]],{shion_(mirudakemann), [wlop],{asakuraf}}',
+    tags: '[[free_style_(yohan1754)]],{shion_(mirudakemann), [wlop],{asakuraf}}',
     img: houtu_1
+  },
+  {
+    name: '厚涂2',
+    tags: 'year_2022, as109, wlop'
+  },
+  {
+    name: 'as109_1',
+    tags: 'year_2022, kamue, chen_bin, as109, [artist:ogipote]',
+    img: as109_1
+  },
+  {
+    name: 'as109_2',
+    tags: 'year_2022, atdan, [as109], [artist:ogipote]',
+    img: as109_2
+  },
+  {
+    name: 'as109_3',
+    tags: 'year_2022, sarena, [morikura_en], [as109]',
+    img: as109_3
   },
   {
     name: '简约',
@@ -75,6 +109,16 @@ const artist_tags_styles = [
     img: morikura_2
   },
   {
+    name: 'morikura_3',
+    tags: '[artist:morikura_en], artist:chiyingzai',
+    img: morikura_3
+  },
+  {
+    name: 'aibek_1',
+    tags: 'aibek, year_2022',
+    img: aibek_1
+  },
+  {
     tags: 'artist:hokori_sakuni',
     img: hokori_sakuni
   },
@@ -83,16 +127,24 @@ const artist_tags_styles = [
     img: kanda_done
   },
   {
-    tags: 'artist:morikura_en, [artist:ogipote], nijisanji'
+    name: 'atdan_1',
+    tags: 'year_2023, hiten, atdan',
+    img: atdan_1
   },
   {
-    tags: 'artist:morikura_en, [artist:ogipote], artist:qian_wu_atai'
+    name: 'atdan_2',
+    tags: '{rin_yuu,atdan,year_2023}',
+    img: atdan_2
   },
   {
-    tags: 'artist:morikura_en, [artist:ogipote], artist:e20'
+    name: 'atdan_3',
+    tags: 're:shimashima ,[atdan],year_2023',
+    img: atdan_3
   },
   {
-    tags: '[artist:morikura_en], artist:chiyingzai'
+    name: 'icwine_1',
+    tags: 'year_2023, icwine, [rin_yuu]',
+    img: icwine_1
   },
   {
     tags: '[[artist:mignon]], [[artist:sazaki_ichiri]]'
@@ -130,6 +182,26 @@ const effect_tags = [
   },{
     name: '官方光影景深',
     tags: 'official art, depth of field,{cinematic lighting},dutch angle'
+  },
+  {
+    name: '趴着裤袜内裤',
+    tags: '1girl, pantyhose, solo, ass, panties, underwear, cameltoe, back, bed_sheet, all_fours, from_behind, panties_under_pantyhose, white_panties, backboob,  facing_away, top-down_bottom-up'
+  },
+  {
+    name: '俯视脱裤袜',
+    tags: '1girl, sailor_collar, serafuku, solo, pantyhose_pull, blue_eyes , pantyhose, looking_at_viewer, navel, clothes_pull, indoors, breasts, no_shoes, full_body, blush, large_breasts, black_pantyhose, choker, undressing, closed_mouth, bare_arms, standing, bag,  bangs, from_above, stomach, feet'
+  },
+  {
+    name: '巧妙遮挡',
+    tags: '{convenient_censoring}'
+  },
+  {
+    name: '假sex',
+    tags: `1boy, hetero, sex, sex from behind, 1girl, smile, sailor_collar, white pantyhose, loli, outdoors, depth of field`
+  },
+  {
+    name: 'sex_1',
+    tags: '1girl, cervix, hetero, internal_cumshot, sex, breasts, penis, uncensored, uterus, x-ray, nipples, cum, sex_from_behind, 1boy, rape, netorare, cum_in_pussy, vaginal,  standing,  saliva, standing_sex, blush, ejaculation, sweat'
   }
 ]
 

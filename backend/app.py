@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, send_file, request
+from flask import Flask, send_from_directory, send_file, request, abort
 from curl_cffi import requests
 import io
 import zipfile
@@ -22,7 +22,7 @@ def unzipone (zip_bytes: bytes):
 
 nai_session = requests.Session()
 proxies = {
-
+    "https": "http://127.0.0.1:1081"
 }
 
 app = Flask(__name__,
@@ -66,16 +66,17 @@ def generate_image():
         'authorization': authorization
     }
 
-    res = nai_session.post(
-        'https://api.novelai.net/ai/generate-image',
-        impersonate="chrome110",
-        proxies=proxies,
-        json=nai_param,
-        headers=headers,
-        timeout=60
-    )
-
     try:
+        res = nai_session.post(
+            'https://api.novelai.net/ai/generate-image',
+            impersonate="chrome110",
+            proxies=proxies,
+            json=nai_param,
+            headers=headers,
+            timeout=60
+        )
+
+
         pngdata = unzipone(res.content)
         img_filename = str(uuid.uuid4()) + '.png'
 
@@ -85,7 +86,7 @@ def generate_image():
         return img_filename
     except:
         print(res.text)
-        return None
+        abort(500)
 
 if __name__ == '__main__':
     app.run(debug=False, port=5001)
