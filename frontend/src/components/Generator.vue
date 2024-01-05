@@ -344,6 +344,12 @@ async function send_action (post_param: SendParam) {
       filename = await res.text()
       if (/.+\.png/.test(filename)) {
         break
+      } else if (filename[0] === '{') {
+        const jsonobj = JSON.parse(filename)
+        if (jsonobj.statusCode === 400) {
+          alert(jsonobj.message)
+          return
+        }
       }
     } catch {
       continue

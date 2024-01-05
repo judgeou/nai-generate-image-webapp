@@ -202,6 +202,10 @@ const effect_tags = [
   {
     name: 'sex_1',
     tags: '1girl, cervix, hetero, internal_cumshot, sex, breasts, penis, uncensored, uterus, x-ray, nipples, cum, sex_from_behind, 1boy, rape, netorare, cum_in_pussy, vaginal,  standing,  saliva, standing_sex, blush, ejaculation, sweat'
+  },
+  {
+    name: 'sex_2',
+    tags: '1girl, hetero, internal_cumshot, sex, cum, sex_from_behind, 1boy, rape, netorare, standing, saliva, standing_sex, blush, ejaculation, sweat'
   }
 ]
 

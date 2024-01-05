@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, send_file, request, abort
+from flask import Flask, send_from_directory, send_file, request, abort, jsonify, make_response
 from curl_cffi import requests
 import io
 import zipfile
@@ -85,8 +85,8 @@ def generate_image():
 
         return img_filename
     except:
-        print(res.text)
-        abort(500)
+        errRes = make_response(res.text, 500)
+        return errRes
 
 if __name__ == '__main__':
     app.run(debug=False, port=5001)
