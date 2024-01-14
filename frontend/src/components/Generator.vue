@@ -55,6 +55,7 @@
         <button style="width: 100px; height: 40px;" :disabled="isGenerating" @click="enhance">Enhance</button>
         <button style="width: 100px; height: 40px;"  @click="generate_task.length = 0">Clear</button>
         <button style="height: 40px;" @click="xyz_batch">xyz_batch</button>
+        <button style="height: 40px;" @click="artist_batch">artist_batch</button>
         <button style="height: 40px;" @click="randomBatch">Random</button>
       </div>
       <div>
@@ -416,8 +417,28 @@ async function xyz_batch () {
   }
 }
 
+function shuffleArray<T> (array: T[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+        // 生成一个随机索引
+        const j = Math.floor(Math.random() * (i + 1));
+        // 交换当前元素与随机选中的元素
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+async function artist_batch () {
+  const artist_list = ['kedama_milk', 'wlop', 'as109', 'ogipote', 'chen_bin', 'atdan', 'morikura_en', 'sincos', 'kanda_done', 're:shimashima', 'mignon', 'hiten', 'fuzichoco', 'goldowl', 'sazaki_ichiri', 'icwine', 'hokori_sakuni', 'chiyingzai', 'baku-p', 'houkisei', 'torino_aqua']
+
+  for (let i = 0; i < 100; i++) {
+    const al = shuffleArray([...artist_list]).splice(0, 3)
+    artist_tag.value = 'year_2022, ' + al.join(', ')
+    generate(1)
+  }
+}
+
 async function randomBatch () {
-  const res1 = await post_json('http://localhost:5000/api/random/3', { "rating":"s","and_array":["1girl","solo"],"or_array":[["outdoors","indoors"]],"limit":100})
+  const res1 = await post_json('http://localhost:5000/api/random/3', { "rating":"s","and_array":["1girl","solo"],"or_array":[],"limit":100})
   const posts = await res1.json()
 
   for (let post of posts) {

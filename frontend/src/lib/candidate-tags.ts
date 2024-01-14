@@ -84,6 +84,10 @@ const artist_tags_styles = [
     img: as109_3
   },
   {
+    name: 'mignon_1',
+    tags: 'year_2022, mignon, as109, atdan'
+  },
+  {
     name: '简约',
     tags: 'tomari_(veryberry00), najar, eluthel,jyt',
     img: jianyue_1
@@ -192,6 +196,10 @@ const effect_tags = [
     tags: '1girl, sailor_collar, serafuku, solo, pantyhose_pull, blue_eyes , pantyhose, looking_at_viewer, navel, clothes_pull, indoors, breasts, no_shoes, full_body, blush, large_breasts, black_pantyhose, choker, undressing, closed_mouth, bare_arms, standing, bag,  bangs, from_above, stomach, feet'
   },
   {
+    name: '吊乳透',
+    tags: 'hanging_breasts, bent_over, see-through_silhouette, see-through, large_breasts'
+  },
+  {
     name: '巧妙遮挡',
     tags: '{convenient_censoring}'
   },
@@ -206,6 +214,14 @@ const effect_tags = [
   {
     name: 'sex_2',
     tags: '1girl, hetero, internal_cumshot, sex, cum, sex_from_behind, 1boy, rape, netorare, standing, saliva, standing_sex, blush, ejaculation, sweat'
+  },
+  {
+    name: 'sex_后入',
+    tags: '1girl, 1boy, breasts, hetero, completely_nude, sex_from_behind, long_hair, age_difference, blonde_hair, sex, nipples, shota, nude, yellow_eyes, onee-shota, large_breasts, blush, black_hair, sweat, standing, torso_grab, doggystyle, very_long_hair, shokuhou_misaki, bangs, open_mouth, standing_sex, smile, from_side, short_hair, motion_lines, bent_over'
+  },
+  {
+    name: 'onee-shota_1',
+    tags: `1girl, 1boy, hetero, lactation, cross-section, breasts, sex, uncensored, penis, open_mouth, shota, nipples, blush, nude, uterus, heart, completely_nude, upright_straddle, vaginal, huge_breasts, smile, breast_sucking, sweat, brown_hair, straddling, age_difference, black_hair, bangs, onee-shota, internal_cumshot, brown_eyes, girl_on_top, collarbone, cum, hand_on_another's_head, cervix, thighs`
   }
 ]
 
